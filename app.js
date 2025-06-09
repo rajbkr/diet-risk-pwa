@@ -1,3 +1,5 @@
+const foodTranslations = {'en': ['Whole grains', 'Vegetables', 'Fruits', 'Legumes', 'Nuts and seeds', 'Fish', 'Red meat', 'Processed meat', 'Sugar-sweetened beverages', 'Refined grains', 'Milk', 'Cheese'], 'no': ['Fullkorn', 'Grønnsaker', 'Frukt', 'Belgfrukter', 'Nøtter og frø', 'Fisk', 'Rødt kjøtt', 'Bearbeidet kjøtt', 'Sukkerholdige drikker', 'Raffinerte kornprodukter', 'Melk', 'Ost'], 'it': ['Cereali integrali', 'Verdure', 'Frutta', 'Legumi', 'Noci e semi', 'Pesce', 'Carne rossa', 'Carne lavorata', 'Bevande zuccherate', 'Cereali raffinati', 'Latte', 'Formaggio']};
+
 const foodGroups = [
   { name: "Whole grains", rrPer100g: 0.85 },
   { name: "Vegetables", rrPer100g: 0.90 },
@@ -23,14 +25,42 @@ const baselineRiskMultipliers = {
   Female: { "18-29": 0.95, "30-49": 1.00, "50-64": 1.10, "65+": 1.20 }
 };
 
+const countryMultipliers = {
+  "World": 1.0,
+  "Norway": 0.92,
+  "USA": 1.15,
+  "UK": 1.1,
+  "Italy": 0.85,
+  "Iran": 1.05
+};
+
+;
+
+function updateLanguage() {
+  const lang = document.getElementById("langSelect").value;
+  const t = translations[lang];
+  document.getElementById("appTitle").innerText = t.title;
+  document.querySelector("label[for=sexSelect]").childNodes[0].textContent = t.sex + ": ";
+  document.querySelector("label[for=ageSelect]").childNodes[0].textContent = t.age + ": ";
+  document.querySelector("label[for=countrySelect]").childNodes[0].textContent = t.country + ": ";
+  document.querySelector("h3").innerText = t.results;
+  document.getElementById("calculateBtn").innerText = t.calculate;
+  document.querySelector("p strong").previousSibling.textContent = t.totalRisk + " ";
+}
+
+document.getElementById("langSelect").onchange = updateLanguage;
+window.addEventListener("load", updateLanguage);
+
 function createSliders() {
+  const lang = document.getElementById("langSelect").value || "en";
+  const names = foodTranslations[lang] || foodGroups.map(f => f.name);
   const container = document.getElementById("slidersContainer");
   container.innerHTML = "";
   foodGroups.forEach((group, index) => {
     const div = document.createElement("div");
     div.className = "slider-group";
     div.innerHTML = `
-      <label>${group.name} (<span id="val-${index}">0</span> g)</label>
+      <label id="label-${index}">${names[index]} (<span id="val-${index}">0</span> g)</label>
       <input type="range" min="0" max="200" value="0" step="1" id="slider-${index}">
     `;
     container.appendChild(div);
@@ -39,70 +69,3 @@ function createSliders() {
     };
   });
 }
-
-function applyPreset(values) {
-  values.forEach((val, i) => {
-    const slider = document.getElementById(`slider-${i}`);
-    if (slider) {
-      slider.value = val;
-      document.getElementById(`val-${i}`).innerText = val;
-    }
-  });
-}
-
-function createPresets() {
-  const presetContainer = document.getElementById("presetContainer");
-  presetContainer.innerHTML = "";
-  Object.entries(presets).forEach(([name, values]) => {
-    const btn = document.createElement("button");
-    btn.innerText = name;
-    btn.onclick = () => applyPreset(values);
-    presetContainer.appendChild(btn);
-  });
-}
-
-function getBaselineMultiplier() {
-  const sex = document.getElementById("sexSelect").value;
-  const age = document.getElementById("ageSelect").value;
-  return baselineRiskMultipliers[sex][age] || 1;
-}
-
-function calculateRisk() {
-  let total = 1;
-  const labels = [], risks = [];
-  foodGroups.forEach((group, i) => {
-    const val = parseInt(document.getElementById(`slider-${i}`).value || "0");
-    const multiplier = Math.pow(group.rrPer100g, val / 100);
-    total *= multiplier;
-    labels.push(group.name);
-    risks.push(multiplier.toFixed(2));
-  });
-
-  const baseline = getBaselineMultiplier();
-  total *= baseline;
-  document.getElementById("totalRisk").innerText = total.toFixed(2);
-  plotChart(labels, risks);
-}
-
-function plotChart(labels, risks) {
-  const ctx = document.getElementById("barChart").getContext("2d");
-  if (window.bar) window.bar.destroy();
-  window.bar = new Chart(ctx, {
-    type: "bar",
-    data: {
-      labels,
-      datasets: [{
-        label: "Risk Multiplier",
-        data: risks,
-      }]
-    },
-    options: {
-      responsive: true,
-      scales: { y: { beginAtZero: true } }
-    }
-  });
-}
-
-document.getElementById("calculateBtn").onclick = calculateRisk;
-createSliders();
-createPresets();
