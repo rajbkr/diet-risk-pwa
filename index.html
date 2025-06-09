@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dietary Risk Tool</title>
+  <link rel="manifest" href="manifest.json" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js');
+      });
+    }
+  </script>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 1rem; max-width: 800px; margin: auto; background: #f9f9f9; }
+    h1 { font-size: 1.8rem; text-align: center; }
+    .slider-group { display: flex; flex-direction: column; margin-bottom: 1rem; background: #fff; padding: 0.75rem; border-radius: 0.5rem; box-shadow: 0 0 5px rgba(0,0,0,0.05); }
+    .slider-group label { font-weight: bold; margin-bottom: 0.25rem; }
+    input[type=range] { width: 100%; }
+    #presetContainer { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin-bottom: 1rem; }
+    button { padding: 0.5rem 1rem; font-size: 1rem; border: none; border-radius: 0.5rem; background-color: #007BFF; color: white; cursor: pointer; }
+    button:hover { background-color: #0056b3; }
+    #calculateBtn { display: block; margin: 1rem auto; }
+    #barChart { margin-top: 2rem; }
+  </style>
+</head>
+<body>
+  <h1>Dietary Risk Tool</h1>
+  <div id="presetContainer"></div>
+  <div id="slidersContainer"></div>
+  <button id="calculateBtn">Calculate Risk</button>
+  <h3 style="text-align:center;">Results</h3>
+  <p style="text-align:center;">Total Relative Risk: <strong id="totalRisk">-</strong></p>
+  <canvas id="barChart" width="400" height="300"></canvas>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
