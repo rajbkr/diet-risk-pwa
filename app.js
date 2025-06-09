@@ -36,20 +36,7 @@ const countryMultipliers = {
 
 ;
 
-function updateLanguage() {
-  const lang = document.getElementById("langSelect").value;
-  const t = translations[lang];
-  document.getElementById("appTitle").innerText = t.title;
-  document.querySelector("label[for=sexSelect]").childNodes[0].textContent = t.sex + ": ";
-  document.querySelector("label[for=ageSelect]").childNodes[0].textContent = t.age + ": ";
-  document.querySelector("label[for=countrySelect]").childNodes[0].textContent = t.country + ": ";
-  document.querySelector("h3").innerText = t.results;
-  document.getElementById("calculateBtn").innerText = t.calculate;
-  document.querySelector("p strong").previousSibling.textContent = t.totalRisk + " ";
-}
 
-document.getElementById("langSelect").onchange = updateLanguage;
-window.addEventListener("load", updateLanguage);
 
 function createSliders() {
   const lang = document.getElementById("langSelect").value || "en";
@@ -69,3 +56,31 @@ function createSliders() {
     };
   });
 }
+
+function updateLanguage() {
+  const lang = document.getElementById("langSelect").value;
+  const t = translations[lang];
+  document.getElementById("appTitle").innerText = t.title;
+  document.querySelector("label[for=sexSelect]").childNodes[0].textContent = t.sex + ": ";
+  document.querySelector("label[for=ageSelect]").childNodes[0].textContent = t.age + ": ";
+  document.querySelector("label[for=countrySelect]").childNodes[0].textContent = t.country + ": ";
+  document.querySelector("h3").innerText = t.results;
+  document.getElementById("calculateBtn").innerText = t.calculate;
+
+  // Rebuild sliders and preserve existing values
+  const values = [];
+  for (let i = 0; i < foodGroups.length; i++) {
+    const val = document.getElementById(`slider-${i}`)?.value || "0";
+    values.push(parseInt(val));
+  }
+  createSliders();
+  values.forEach((val, i) => {
+    const slider = document.getElementById(`slider-${i}`);
+    if (slider) {
+      slider.value = val;
+      document.getElementById(`val-${i}`).innerText = val;
+    }
+  });
+}
+document.getElementById("langSelect").onchange = updateLanguage;
+window.addEventListener("load", updateLanguage);
