@@ -19,15 +19,33 @@
     .slider-group { display: flex; flex-direction: column; margin-bottom: 1rem; background: #fff; padding: 0.75rem; border-radius: 0.5rem; box-shadow: 0 0 5px rgba(0,0,0,0.05); }
     .slider-group label { font-weight: bold; margin-bottom: 0.25rem; }
     input[type=range] { width: 100%; }
+    select { padding: 0.5rem; font-size: 1rem; margin: 0.5rem; }
     #presetContainer { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin-bottom: 1rem; }
     button { padding: 0.5rem 1rem; font-size: 1rem; border: none; border-radius: 0.5rem; background-color: #007BFF; color: white; cursor: pointer; }
     button:hover { background-color: #0056b3; }
     #calculateBtn { display: block; margin: 1rem auto; }
     #barChart { margin-top: 2rem; }
+    .selectors { text-align: center; margin-bottom: 1rem; }
   </style>
 </head>
 <body>
   <h1>Dietary Risk Tool</h1>
+  <div class="selectors">
+    <label>Sex:
+      <select id="sexSelect">
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
+    </label>
+    <label>Age Group:
+      <select id="ageSelect">
+        <option value="18-29">18–29</option>
+        <option value="30-49">30–49</option>
+        <option value="50-64">50–64</option>
+        <option value="65+">65+</option>
+      </select>
+    </label>
+  </div>
   <div id="presetContainer"></div>
   <div id="slidersContainer"></div>
   <button id="calculateBtn">Calculate Risk</button>

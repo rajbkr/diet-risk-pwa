@@ -18,6 +18,11 @@ const presets = {
   Healthy: [100, 150, 150, 80, 40, 50, 20, 10, 0, 30, 200, 50]
 };
 
+const baselineRiskMultipliers = {
+  Male: { "18-29": 1.00, "30-49": 1.05, "50-64": 1.15, "65+": 1.30 },
+  Female: { "18-29": 0.95, "30-49": 1.00, "50-64": 1.10, "65+": 1.20 }
+};
+
 function createSliders() {
   const container = document.getElementById("slidersContainer");
   container.innerHTML = "";
@@ -56,6 +61,12 @@ function createPresets() {
   });
 }
 
+function getBaselineMultiplier() {
+  const sex = document.getElementById("sexSelect").value;
+  const age = document.getElementById("ageSelect").value;
+  return baselineRiskMultipliers[sex][age] || 1;
+}
+
 function calculateRisk() {
   let total = 1;
   const labels = [], risks = [];
@@ -67,6 +78,8 @@ function calculateRisk() {
     risks.push(multiplier.toFixed(2));
   });
 
+  const baseline = getBaselineMultiplier();
+  total *= baseline;
   document.getElementById("totalRisk").innerText = total.toFixed(2);
   plotChart(labels, risks);
 }
