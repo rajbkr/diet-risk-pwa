@@ -44,12 +44,20 @@
     </label>
   </div>
 
+  <div>
+    <button onclick="applyPreset('healthy')">Healthy Diet</button>
+    <button onclick="applyPreset('western')">Western Diet</button>
+  </div>
+
   <h3>Results</h3>
   <p><strong>Total Relative Risk:</strong> <span id="riskResult">-</span></p>
 
   <div id="slidersContainer"></div>
   <button id="calculateBtn">Calculate Risk</button>
 
+  <canvas id="riskChart" width="400" height="300"></canvas>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

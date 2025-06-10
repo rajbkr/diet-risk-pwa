@@ -28,6 +28,13 @@ const countryMultipliers = {
   "Iran": 1.05
 };
 
+const presets = {
+  healthy: [90, 300, 250, 100, 30, 50, 50, 20, 0, 50, 200, 40],
+  western: [10, 100, 90, 30, 5, 10, 100, 80, 250, 200, 50, 60]
+};
+
+let chart = null;
+
 function createSliders() {
   const container = document.getElementById("slidersContainer");
   container.innerHTML = "";
@@ -36,12 +43,21 @@ function createSliders() {
     div.className = "slider-group";
     div.innerHTML = `
       <label>${group.name} (<span id="val-${index}">0</span> g)</label>
-      <input type="range" min="0" max="200" value="0" step="1" id="slider-${index}">
+      <input type="range" min="0" max="300" value="0" step="1" id="slider-${index}">
     `;
     container.appendChild(div);
     document.getElementById(`slider-${index}`).oninput = function () {
       document.getElementById(`val-${index}`).innerText = this.value;
     };
+  });
+}
+
+function applyPreset(type) {
+  const values = presets[type];
+  values.forEach((val, index) => {
+    const slider = document.getElementById(`slider-${index}`);
+    slider.value = val;
+    document.getElementById(`val-${index}`).innerText = val;
   });
 }
 
@@ -52,19 +68,45 @@ function getCountryMultiplier() {
 
 function calculateRisk() {
   let risk = 1.0;
+  let values = [];
+
   foodGroups.forEach((group, index) => {
     const amount = parseFloat(document.getElementById(`slider-${index}`).value || 0);
+    values.push(amount);
     risk += group.weight * amount / 100;
   });
 
   const sex = document.getElementById("sexSelect").value;
   const age = document.getElementById("ageSelect").value;
-
   const baseMult = baselineMultipliers[sex][age] || 1;
   const countryMult = getCountryMultiplier();
 
   const finalRisk = (risk * baseMult * countryMult).toFixed(2);
   document.getElementById("riskResult").innerText = finalRisk;
+
+  renderChart(values);
+}
+
+function renderChart(values) {
+  const ctx = document.getElementById("riskChart").getContext("2d");
+  if (chart) chart.destroy();
+  chart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: foodGroups.map(f => f.name),
+      datasets: [{
+        label: "g per day",
+        data: values,
+        backgroundColor: "rgba(100, 149, 237, 0.6)"
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
 }
 
 document.getElementById("calculateBtn").onclick = calculateRisk;
