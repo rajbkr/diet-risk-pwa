@@ -29,8 +29,8 @@
   </style>
 </head>
 <body>
-  <h1>Dietary Risk Tool</h1>
-  <div class="selectors">
+  <h1 id="appTitle">Dietary Risk Tool</h1>
+  <div style="text-align:center; margin-bottom:1rem;"><label>Language: <select id="langSelect"><option value="en">English</option><option value="no">Norwegian</option><option value="it">Italian</option></select></label></div><div class="selectors">
     <label>Sex:
       <select id="sexSelect">
         <option value="Male">Male</option>
@@ -43,6 +43,16 @@
         <option value="30-49">30–49</option>
         <option value="50-64">50–64</option>
         <option value="65+">65+</option>
+      </select>
+    </label>
+    <label>Country:
+      <select id="countrySelect">
+        <option value="World">World</option>
+        <option value="Norway">Norway</option>
+        <option value="USA">USA</option>
+        <option value="UK">UK</option>
+        <option value="Italy">Italy</option>
+        <option value="Iran">Iran</option>
       </select>
     </label>
   </div>
